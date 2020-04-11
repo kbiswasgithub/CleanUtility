@@ -1,0 +1,59 @@
+On Error Resume Next
+Dim fso, folder, files, NewsFile,sFolder
+Dim wshShell,tempPath,TempFolder,tempFiles,destFolder,specifiedDate,frmDt,toDt,sortedFile,tempfolds,fldrCrtDate
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set wshShell = CreateObject("WScript.Shell")
+tempPath = wshShell.ExpandEnvironmentStrings("%temp%")
+Set  TempFolder = fso.Getfolder(tempPath)
+Set tempFiles = TempFolder.Files
+destFolder = InputBox("Please tell the path where to copy the logs","Logs Folder Path")
+specifiedDate = InputBox("Please Mention Date In MM/DD/YYYY Format","Please Specify The Range Of Date","08/01/2013-08/01/2013")
+Do until (Instr(1,specifiedDate,"-")>=1)
+	msgbox "Please Mention"&"-"&"between two Dates"
+	specifiedDate = InputBox("Please Mention Date In MM/DD/YYYY Format","Please Specify The Range Of Date","08/01/2013-08/01/2013")
+Loop
+frmDt = (Split(specifiedDate,"-")(0))
+toDt = (Split(specifiedDate,"-")(1))
+Do until ( checkDateFormat(frmDt) And checkDateFormat(toDt) )
+		msgbox "Please check Date Format"
+		specifiedDate = InputBox("Please Mention Date In MM/DD/YYYY Format","Please Specify The Range Of Date","08/01/2013-08/01/2013")
+		frmDt = (Split(specifiedDate,"-")(0))
+		toDt = (Split(specifiedDate,"-")(1))
+Loop 
+Dim subfld,destinationFolder
+Set sortedFile = fso.CreateTextFile(destFolder&"\"&"Log Transfered.txt")
+For each tempfolds in TempFolder.SubFolders
+
+    If ( tempfolds.SubFolders.Count >0 ) Then
+		fldrCrtDate = Cdate(Split(tempfolds.dateCreated," ")(0))
+		If ((fldrCrtDate>=CDate(frmDt)) And (fldrCrtDate<=Cdate(toDt))) Then
+			For each subfld in tempfolds.SubFolders
+				If subfld.Name="R" or subfld.Name="HTML Results" Then
+					sourceFolder = TempFolder &"\"&tempfolds.Name
+					destinationFolder = destFolder
+					Call fso.CopyFolder(sourceFolder,destinationFolder,False)
+					sortedFile.WriteLine("Folder Name:-	" & tempfolds.Name & ";" & tempfolds.DateCreated)
+				End If
+			Next
+		End If
+	End If
+
+Next
+outfile.Close 
+destFldSize=Round((((fso.GetFolder(destinationFolder).Size)/1024)/1024),2)
+msgbox "Total Amount Of Log's Transfered : = " &destFldSize &" MB"
+Function checkDateFormat(testDt)
+	Dim regex
+	Set regex=new RegExp
+	regex.ignorecase=true
+	regex.global=true
+	regex.pattern="^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$"
+	checkDateFormat = regex.test(testDt)
+End Function
+
+
+
+
+
+
+

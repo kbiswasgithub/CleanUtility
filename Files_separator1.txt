@@ -1,0 +1,305 @@
+Set  fso = CreateObject("Scripting.FileSystemObject")
+'Set  ObjOutFile = fso.CreateTextFile("C:\testfiles.txt")
+strRootFolder = fso.GetAbsolutePathName(".")
+If fso.FolderExists(strRootFolder) = False Then
+		msgbox "Folder Not Exist "
+'		Exit function
+Else
+Set  ObjFolder = fso.GetFolder(strRootFolder)
+Set  ObjFiles = ObjFolder.Files
+On Error Resume Next
+'strDestFolderName = InputBox("Folder name for MS-EXCEL Files")
+If (Err.Number<>0) Then
+End If
+For  Each ObjFile In ObjFiles
+
+	'For Excel Files
+'Excel 2007 File Type Extension
+'
+'    xlsx - Excel 2007 XML Workbook
+'    xlsm - Excel 2007 XML Macro-Enabled Workbook
+'    xltx - Excel 2007 XML Template
+'    xltm - Excel 2007 XML Macro-Enabled Template
+'    xlsb - Excel 2007 binary workbook (BIFF12)
+'    xlam - Excel 2007 XML Macro-Enabled Add-In
+'    xll - Excel 2007 compiled macros
+'	xls - Excel 2003-2007 Format
+	extName = (Trim(Ucase(fso.GetExtensionName(ObjFile))))
+
+	If (extName = Ucase("xls")) or (extName = Ucase("csv")) or (extName =  Ucase("xlr")) or (extName = Ucase("xlsx")) or (extName = Ucase("xlt")) or (extName = Ucase("xltm")) or (extName = Ucase("xlsb")) or (extName = Ucase("xlam")) or (extName = Ucase("xlsm")) or (extName = Ucase("xltx")) or (extName = Ucase("xll")) Then
+		strDestFolder = strRootFolder  & "\" & "EXCEL Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'For MS-Word Files
+'Word Text Files Types and Formats
+'    .docx - Word 2007 XML Document
+'    .docm - Word 2007 XML Macro-Enabled Document
+'    .dotx - Word 2007 XML Template
+'    .dotm - Word 2007 XML Macro-Enabled Template
+'.doc 	Microsoft Word Document
+'.log 	Log File
+'.msg 	Outlook Mail Message
+'.pages 	Pages Document
+
+'.wpd 	WordPerfect Document
+'.wps 	Microsoft Works Word Processor Document
+
+	If (extName = Ucase("doc")) or (extName = Ucase("docx")) or (extName = Ucase("docm")) or (extName = Ucase("dotx")) or (extName = Ucase("dotm")) or (extName = Ucase("doc")) or (extName = Ucase("log")) or (extName = Ucase("msg")) or (extName = Ucase("pages")) or (extName = Ucase("wpd")) or (extName = Ucase("wps")) Then
+		strDestFolder = strRootFolder  & "\" & "Word Document Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'For Presentation files
+'PowerPoint 2007 File Type Extension
+''	ppt- PowerPoint 2003-2007 Format
+'    pptx - PowerPoint 2007 XML Presentation
+'    pptm - PowerPoint 2007 Macro-Enabled XML Presentation
+'    potx - PowerPoint 2007 XML Template
+'    potm - PowerPoint 2007 Macro-Enabled XML Template
+'    ppam - PowerPoint 2007 Macro-Enabled XML Add-In
+'    ppsx - PowerPoint 2007 XML Show not work
+'    ppsm - PowerPoint 2007 Macro-Enabled XML Show
+
+	If (extName = Ucase("pptx")) OR (extName = Ucase("ppt")) or (extName = Ucase("pptm")) or (extName = Ucase("potx")) or (extName = Ucase("potm")) or (extName = Ucase("ppam")) or (extName = Ucase("ppam")) or (extName = Ucase("ppsm")) Then
+		strDestFolder = strRootFolder  & "\" & "POWER POINT Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'For  ACCESS files
+'Access 2007 File Type Extension
+	If extName = Ucase("ACCDB") or extName = Ucase("ACCDE") or extName = Ucase("ACCDT") or extName = Ucase("ACCDR ") Then
+		strDestFolder = strRootFolder  & "\" & "Access Database Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+	'For Text Files
+
+	If extName = Ucase("rtf") or extName = Ucase("txt") Then
+		strDestFolder = strRootFolder  & "\" & "NOTEPAD Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'Raster Image Files Types and Formats
+'.bmp 	Bitmap Image File
+'.gif 	Graphical Interchange Format File
+'.jpg 	JPEG Image File
+'.png 	Portable Network Graphic
+'.psd 	Adobe Photoshop Document
+'.pspimage 	PaintShop Pro Image
+'.thm 	Thumbnail Image File
+'.tif 	Tagged Image File
+'.yuv 	YUV Encoded Image File
+'Vector Image Files Types and Formats
+'.ai 	Adobe Illustrator File
+'.drw 	Drawing File
+'.eps 	Encapsulated PostScript File
+'.ps 	PostScript File
+'.svg 	Scalable Vector Graphics File
+	'For Images Files
+
+	If extName =Ucase("bmp") or extName = Ucase("gif") or extName = Ucase("jpg") or extName = Ucase("png") or extName = Ucase("psd") or extName = Ucase("pspimage") or extName = Ucase("thm") or extName = Ucase("tif") or extName = Ucase("yuv") or extName = Ucase("ai") or extName = Ucase("drw") or extName = Ucase("eps") or extName = Ucase("ps") or extName = Ucase("svg") Then
+		strDestFolder = strRootFolder  & "\" & "IMAGE Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+
+'Audio File Types and Formats
+'.aif 	Audio Interchange File Format
+'.iff 	Interchange File Format
+'.m3u 	Media Playlist File
+'.m4a 	MPEG-4 Audio File
+'.mid 	MIDI File
+'.mp3 	MP3 Audio File
+'.mpa 	MPEG-2 Audio File
+'.ra 	Real Audio File
+'.wav 	WAVE Audio File
+'.wma 	Windows Media Audio File
+
+	If extName = Ucase("aif") or extName = Ucase("iff") or extName = Ucase("m3u") or extName = Ucase("m4a") or extName = Ucase("mid") or extName = Ucase("mp3") or extName = Ucase("mpa") or extName = Ucase("ra") or extName = Ucase("wav") or extName = Ucase("wma")Then
+		strDestFolder = strRootFolder  & "\" & "MUSIC Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'Video Files Types and Formats
+'.3g2 	3GPP2 Multimedia File
+'.3gp 	3GPP Multimedia File
+'.asf 	Advanced Systems Format File
+'.asx 	Microsoft ASF Redirector File
+'.avi 	Audio Video Interleave File
+'.flv 	Flash Video File
+'.mov 	Apple QuickTime Movie
+'.mp4 	MPEG-4 Video File
+'.mpg 	MPEG Video File
+'.rm 	Real Media File
+'.swf 	Shockwave Flash Movie
+'.vob 	DVD Video Object File
+'.wmv 	Windows Media Video File
+
+	If extName = Ucase("3g2") or extName = Ucase("3gp") or extName = Ucase("asf") or extName = Ucase("asx") or extName = Ucase("avi") or extName = Ucase("flv") or extName = Ucase("mov") or extName = Ucase("mp4") or extName = Ucase("mpg") or extName = Ucase("rm") or extName = Ucase("swf") or extName = Ucase("vob") or extName = Ucase("wmv") Then
+		strDestFolder = strRootFolder  & "\" & "VIDEO Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'Web Files Types and Formats
+'.asp 	Active Server Page
+'.cer 	Internet Security Certificate
+'.csr 	Certificate Signing Request File
+'.css 	Cascading Style Sheet
+'.htm 	Hypertext Markup Language File
+'.html 	Hypertext Markup Language File
+'.js 	JavaScript File
+'.jsp 	Java Server Page
+'.php 	Hypertext Preprocessor File
+'.rss 	Rich Site Summary
+'.xhtml 	Extensible Hypertext Markup Language File
+
+	If extName = Ucase("asp") or extName = Ucase("cer") or extName = Ucase("csr") or extName = Ucase("css") or extName = Ucase("htm") or extName = Ucase("html") or extName = Ucase("js") or extName = Ucase("jsp") or extName = Ucase("php") or extName = Ucase("rss") or extName = Ucase("xhtml")Then
+		strDestFolder = strRootFolder  & "\" & "WEB INTERNET Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+
+'    Page Layout Files Types and Formats
+'.indd 	Adobe InDesign Document
+'.pct 	Picture File
+'.pdf 	Portable Document Format File
+'.qxd 	QuarkXPress Document
+'.qxp 	QuarkXPress Project File
+'.rels 	Open Office XML Relationships File
+ 
+	If extName = Ucase("indd")  or extName = Ucase("pct") or extName = Ucase("pdf") or extName = Ucase("qxd") or extName = Ucase("qxp") or extName = Ucase("rels") Then
+		strDestFolder = strRootFolder  & "\" & "PAGE LAYOUT Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+'    Developer Files Types and Formats
+'.c 	C/C++ Source Code File
+'.class 	Java Class File
+'.cpp 	C++ Source Code File
+'.cs 	Visual C# Source Code File
+'.dtd 	Document Type Definition File
+'.fla 	Adobe Flash Animation
+'.java 	Java Source Code File
+'.m 	Objective-C Implementation File
+'.pl 	Perl Script
+'.py 	Python Script
+
+	If extName = Ucase("c")  or extName =  Ucase("class")  or extName =  Ucase("cpp")  or extName =  Ucase("cs")  or extName =  Ucase("dtd")  or extName = Ucase("fla")  or extName =  Ucase("java")  or extName =  Ucase("m")  or extName =  Ucase("pl")  or extName =  Ucase("py") Then
+		strDestFolder = strRootFolder  & "\" & "DEVELOPER Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+
+	If extName = Ucase("exe") Then
+		strDestFolder = strRootFolder  & "\" & "Executable Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+'
+'    Compressed Files Types and Formats
+'.7z 	7-Zip Compressed File
+'.deb 	Debian Software Package
+'.gz 	Gnu Zipped Archive
+'.pkg 	Mac OS X Installer Package
+'.rar 	WinRAR Compressed Archive
+'.rpm 	Red Hat Package Manager File
+'.sit 	StuffIt Archive
+'.sitx 	StuffIt X Archive
+'.tar.gz 	Tarball File
+'.zip 	Zipped File
+'.zipx 	Extended Zip File
+
+	If extName = Ucase("7z") or extName = Ucase("deb") or extName = Ucase("gz") or extName = Ucase("pkg")  or extName =  Ucase("rar")  or extName =  Ucase("rpm") or extName =  Ucase("sit")  or extName =  Ucase("sitx")  or extName =  Ucase("zip")  or extName =  Ucase("zipx") Then
+		strDestFolder = strRootFolder  & "\" & "COMPRESSED_ZIP Files"
+		If  (fso.FolderExists(strDestFolder))Then
+			'Print "Folder already exist
+		Else
+		'Print "Folder Created"
+			fso.CreateFolder(strDestFolder)
+		End If
+		Call fso.MoveFile(ObjFile,strDestFolder & "\")
+	End If
+    'objOutFile.WriteLine(ObjFile.Name & String(50 - Len(ObjFile.Name), " ") & ObjFile.Path)
+Next
+msgbox "FILE'S SEPARATION DONE"
+Err.Clear
+	On Error Goto 0
+End If
+
+
+
+
+
+
+

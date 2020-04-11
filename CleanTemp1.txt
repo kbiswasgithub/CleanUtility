@@ -1,0 +1,101 @@
+On Error Resume Next
+Dim FSO,ShellObj,LogFile,BeforeCleanUpSize,AfterCleanUpSize,TempFileName,TempFolderName,FolderSkipped
+Set ShellObj=CreateObject("WScript.Shell")
+Set FSO =CreateObject("Scripting.FileSystemObject")
+Set TempFolder=FSO.GetSpecialFolder(2)
+Set LogFile= TempFolder.CreateTextFile("TempCleanerLogFile.txt",TRUE)
+BeforeCleanUpSize=TempFolder.Size
+Dim simpleSize
+simpleSize=Round(((TempFolder.Size/1024)/1024),2) 
+LogFile.WriteLine "******************************************"
+LogFile.WriteLine "Log---" & Date
+LogFile.WriteLine "******************************************"
+LogFile.WriteLine "Folder Size Before clean up " & simpleSize & " MB"
+LogFile.WriteLine "******************************************"
+'Msgbox "Folder Size Before clean up " & simpleSize & " MB"
+LogFile.WriteLine "**** Starting Files deletion ****" 
+Err.Clear
+For each tempFiles in TempFolder.Files
+	FolderSkipped=False
+
+	'Msgbox tempFiles.Type
+	If INSTR( UCASE(tempFiles.Type),"COMPRESSED")=0 AND tempFiles.Name<>"TempCleanerLogFile" Then
+		LogFile.WriteBlankLines(1)
+		LogFile.WriteLine "Deleting File--" &  tempFiles.Name
+		TempFileName= tempFiles.Name
+		tempFiles.Delete
+		TempFileName= tempFiles.Name
+		If Err.Number<>0 Then
+			LogFile.WriteLine "Error Encountered--" &  Err.Description
+			Else
+			LogFile.WriteLine TempFileName & " file deleted successfully"
+		End if
+		Else
+		LogFile.WriteBlankLines(1)
+		LogFile.WriteLine "Skipping File--" & tempFiles.Name
+		LogFile.WriteLine "******************************************"
+		FolderSkipped=True
+	End If
+	Err.Clear
+Next
+LogFile.WriteBlankLines(1)
+LogFile.WriteLine "**** Starting Folder deletion ****" 
+Err.Clear
+For each tempfolds in TempFolder.SubFolders
+	FolderDeleted=false
+	FolderSkipped=false
+	'msgbox " Sub Folder Name " & tempfolds.Name & " is having " &  tempfolds.SubFolders.Count & " subfolders"
+	If  tempfolds.SubFolders.Count >0 Then
+		For each subfld in tempfolds.SubFolders
+            If NOT subfld.Name="R" Then
+				LogFile.WriteBlankLines(1)
+				LogFile.WriteLine"Deletinig Folder--" & tempfolds
+				TempFolderName=tempfolds.Name
+				tempfolds.Delete
+				FolderDeleted=true
+				If Err.Number<>0 Then
+					LogFile.WriteLine "Error Encountered--" &  Err.Description
+					LogFile.WriteLine "******************************************"
+					Else
+					LogFile.WriteLine TempFolderName & " folder deleted successfully"
+					LogFile.WriteLine "******************************************"
+				End if 
+				Else
+				LogFile.WriteBlankLines(1)
+				LogFile.WriteLine "Skipping Folder--" & tempfolds
+				FolderSkipped=True
+				LogFile.WriteLine "******************************************"
+			End If
+
+		Next
+	End If
+	If NOT (FolderDeleted OR FolderSkipped) Then
+		If INSTR(1,UCASE(tempfolds.Name),"RESULT")=0 Then
+			LogFile.WriteBlankLines(1)
+			LogFile.WriteLine"Deletinig Folder--" & tempfolds
+			TempFolderName=tempfolds.Name
+			 tempfolds.Delete
+			 If Err.Number<>0 Then
+					LogFile.WriteLine "Error Encountered--" &  Err.Description
+					LogFile.WriteLine "******************************************"
+					else
+					LogFile.WriteLine TempFolderName & " folder deleted successfully"
+					LogFile.WriteLine "******************************************"
+			End if
+			 Else
+			 LogFile.WriteBlankLines(1)
+			LogFile.WriteLine "Skipping Folder--" & tempfolds
+			LogFile.WriteLine "******************************************"
+		End If
+	End If
+	Err.Clear
+Next
+AfterCleanUpSize=FSO.GetSpecialFolder(2).Size
+LogFile.WriteBlankLines(1)
+LogFile.WriteLine Round(((BeforeCleanUpSize-AfterCleanUpSize)/(1024*2)),2) & " MB amount of Memory released"
+LogFile.WriteLine "********** Temporary clean up complete **********"
+LogFile.WriteLine "******************************************"
+LogFile.WriteLine "******************************************"
+MSgbox Round(((BeforeCleanUpSize-AfterCleanUpSize)/(1024*2)),2) & " MB amount of Memory released",64,"Memory Booster"
+LogFile.Close
+On error Goto 0

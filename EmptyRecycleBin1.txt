@@ -1,0 +1,153 @@
+On Error Resume Next
+'***********************************FUNCTION/SUB CALLS*******************************
+If(EmptyRecycleBin)Then
+	MsgBox "Recycle Bin Emptied",vbInformation,"Alert"
+Else
+	MsgBox "Recycle Bin not Emptied - Error # " & CStr(Err.Number) & " " & Err.Description,vbCritical,"Alert"
+End If
+'***********************************FUNCTION/SUB CALLS*******************************
+
+'**************************************************************************************************************************************
+'@Function Name    		: GetSystemDrive
+'@Description     		 Returns current system drive.
+'@Documentation          Returns current system drive.
+'@Parameters Used     	: None
+'@Author					: Rahul Shaw
+'@Date Created			: 06/30/2015
+'**************************************************************************************************************************************
+Public Function GetSystemDrive()
+	
+	Set objShell=CreateObject("WScript.Shell")
+	strSystemDrive=objShell.ExpandEnvironmentStrings("%SYSTEMDRIVE%")
+	
+GetSystemDrive=strSystemDrive	
+End Function
+
+'**************************************************************************************************************************************
+'@Subroutine Name    		: DeleteFolderContents
+'@Description     		 To Clear Folder contents
+'@Documentation          To Clear Folder contents
+'@Parameters Used     	: strFolder
+'@Comments              : Deletes all files and folders within the given folder based on passed strFolder(Source Folder) value
+'@Author					: Rahul Shaw
+'@Date Created			: 06/15/2015
+'**************************************************************************************************************************************
+Sub DeleteFolderContents(ByVal strFolder)
+    
+   'Deletes all files and folders within the given folder
+    Dim objFolder,objFile, objSubFolder,itemCount,objFSO
+    itemCount = 0
+    
+    On Error Resume Next
+    	'Creating File System Object
+    	Set objFSO=CreateObject("Scripting.FileSystemObject")
+    	'Instantiating the folder object
+    	Set objFolder=objFSO.GetFolder(strFolder)
+  
+    	If Err.Number<>0 Then
+        	Err.Clear
+        	Exit Sub 'In case the folder object is not instantiated
+    	End If
+
+			'Loops for each sub folder in the Folder collection 
+			For Each objSubFolder In objFolder.SubFolders
+			   'Deletes the cache item 
+        		    objSubFolder.Delete True
+        			If Err.Number<>0 Then
+            			 'Calling the Sub procedures recursively
+           		 	 	Err.Clear
+            			 	DeleteFolderContents(strFolder & "\" & objSubFolder.Name)
+            			 	DeleteSubfolderFiles(strFolder & "\" & objSubFolder.Name)
+				Else
+	    		            itemCount = itemCount + 1
+        			End If
+			Next
+			
+			'Loops for each File in the Folder collection 
+    			For Each objFile In ObjFolder.Files
+        			objFile.Delete True
+        			If Err.Number<>0 Then 
+				    Err.Clear ' In case unable to delete a file
+				Else
+	        		    itemCount = itemCount + 1
+			        End If
+    		        Next
+
+    Set objFolder=Nothing
+    Set objFSO=Nothing
+End Sub
+
+'**************************************************************************************************************************************
+'@Subroutine Name    		: DeleteSubfolderFiles
+'@Description     		 To Clear Folder and Sub Folder contents
+'@Documentation          To Clear Folder and Sub Folder contents
+'@Parameters Used     	: strFolder
+'@Comments              : Deletes all files and sub folders within the given folder based on passed strFolder(Source Folder) value
+'@Author					: Rahul Shaw
+'@Date Created			: 06/15/2015
+'**************************************************************************************************************************************
+Sub DeleteSubfolderFiles(ByVal strFolder)
+   
+   'Deletes all files only, within subfolders of the current folder
+    Dim objFolder,objFile,objSubFolder,itemCount,objFSO
+    itemCount = 0
+    
+    On Error Resume Next
+    'Creating File System Object
+	Set objFSO=CreateObject("Scripting.FileSystemObject")
+	 'Instantiating the folder object
+	Set objFolder=objFSO.GetFolder(strFolder)
+		'Loops for each sub folder in the Folder collection 
+    	For Each objSubFolder In objFolder.SubFolders
+    		'Loops for each sub folder files in the Sub Folder collection 
+			For Each objFile In objSubFolder.Files
+				objFile.Delete True
+                		If Err.Number<>0 Then 
+				    Err.Clear ' In case unable to delete a file
+				Else
+	        	    	    itemCount = itemCount + 1
+				End If
+			Next
+   	Next
+
+    Set objFolder=Nothing
+    Set objFSO=Nothing
+End Sub
+
+'**************************************************************************************************************************************
+'@Function Name    		: EmptyRecycleBin
+'@Description     		 To Clear Recycle Bin Files 
+'@Documentation          To Clear Recycle Bin Files 
+'@Parameters Used     	: None
+'@Author					: Rahul Shaw
+'@Date Created			: 01/17/2017
+'**************************************************************************************************************************************
+Public Function EmptyRecycleBin()
+
+Dim strDrive,objFSO,strDirectoryPath,objFolder,objShell
+	
+
+	strDrive=GetSystemDrive()
+
+	Set objFSO=CreateObject("Scripting.FileSystemObject")
+	
+	strDirectoryPath=strDrive&"$\RECYCLER"
+	If(Not(objFSO.FolderExists(sDirectoryPath)))Then
+	    strDirectoryPath = strDrive&"\$Recycle.Bin"
+	End If
+	
+	Set objFolder = objFSO.GetFolder(strDirectoryPath)
+	
+	If(Not(objFolder Is Nothing))Then
+		DeleteFolderContents objFolder
+		DeleteSubfolderFiles objFolder
+                EmptyRecycleBin=True
+	Else
+		EmptyRecycleBin=False
+		Err.Clear 
+	End If
+	
+Set objFSO=Nothing
+Set objFolder=Nothing
+objShell=Nothing
+End Function
